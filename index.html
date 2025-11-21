@@ -10,6 +10,7 @@
                 --padding-mobile: 15px;
                 --dark-text: #000;
                 --light-text: #fff;
+                --faded-text: #D9D9D9;
                 --highlight-color: #025B58;
             }
             body {
@@ -95,12 +96,16 @@
                     min-width: 150px;
                     &:active {
                         box-shadow: none;
-                        margin-top: 5px;
-                        margin-bottom: -5px;
-                        margin-left: 6px;
+                        margin: 5px -6px -5px 6px;
                     }
                 }
-                legend {
+                input[type=radio] + span {
+                    opacity: .5;
+                }
+                input[type=radio]:checked + span {
+                    opacity: 1;
+                }
+                legend, input[type=radio] + span {
                     font-weight: 500;
                 }
                 label {
@@ -128,7 +133,46 @@
                 .submit-form__row > * {
                     flex: 1 1 100%;
                 }
-                .submit-form__row_credentials, .submit-form__row_agreement, .submit-form__row_submit {
+                .submit-form__range_slider {
+                    position: relative;
+                    margin-top: 14px;
+                    div, input[type=range] {
+                        position: absolute;
+                        top: 50%;
+                        right: 0;
+                        left: 0;
+                    }
+                    div {
+                        height: 1px;
+                        background-color: var(--faded-text);
+                        padding: 0 10px;
+                        span {
+                            display: block;
+                            height: 1px;
+                        }
+                    }
+                    input[type=range] {
+                        transform: translateY(-50%);
+                        margin: 0;
+                        background: none;
+                        appearance: none;
+                        pointer-events: none;
+                        width: calc(100% - 10px);
+                    }
+                    input[type=range]:last-child {
+                        margin-left: 10px;
+                    }
+                    input[type=range]::-webkit-slider-thumb, input[type=range]::-moz-range-thumb {
+                        pointer-events: auto;
+                        cursor: pointer;
+                        appearance: none;
+                        border: none;
+                        width: 10px;
+                        height: 10px;
+                        background-color: var(--highlight-color);
+                    }
+                }
+                .submit-form__row_options, .submit-form__row_credentials, .submit-form__row_agreement, .submit-form__row_submit {
                     margin-top: 28px;
                 }
             }
@@ -174,6 +218,13 @@
                     .submit-form__row {
                         flex-direction: row;
                     }
+                    .submit-form_radio-fieldset {
+                        display: flex;
+                        height: 100%;
+                        .submit-form__row {
+                            align-items: center;
+                        }
+                    }
                 }
             }
         </style>
@@ -199,18 +250,24 @@
                     <div>
                         <fieldset>
                             <legend>Выберите диапазон</legend>
-                            <div class="submit-form__row">
-                                <input type="number" name="range__input-min" min="0" max="150" placeholder="от 0" />
-                                <input type="number" name="range__input-max" min="0" max="150" placeholder="от 150"/>
+                            <div class="submit-form__row submit-form__range_input">
+                                <input type="number" name="range__input-min" min="0" value="10" max="150" placeholder="от 0" />
+                                <input type="number" name="range__input-max" min="0" value="100" max="150" placeholder="от 150"/>
                             </div>
                         </fieldset>
                         <div class="submit-form__row">
-                            <input type="range" class="range__range-slider reset-offset" min="0" max="150" value="0" step="0" />
+                            <div class="submit-form__range_slider">
+                                <div>
+                                    <span></span>
+                                </div>
+                                <input type="range" class="submit-form__range_slider__min" name="range-min" min="0" max="150" value="10" step="0" />
+                                <input type="range" class="submit-form__range_slider__max" name="range-max" min="0" max="150" value="100" step="0" />
+                            </div>
                         </div>
                     </div>
                     <div></div>
                 </div>
-                <div class="submit-form__row">
+                <div class="submit-form__row submit-form__row_options">
                     <div>
                         <fieldset>
                             <legend>Выберите select</legend>
@@ -226,15 +283,21 @@
                         </fieldset>
                     </div>
                     <div>
-                        <fieldset>
+                        <fieldset class="submit-form_radio-fieldset">
                             <legend>Выберите radio</legend>
                             <div class="submit-form__row">
-                                <label><input type="radio" name="radio" value="javascript">
-                                JavaScript</label>
-                                <label><input type="radio" name="radio" value="php">
-                                PHP</label>
-                                <label><input type="radio" name="radio" value="csharp">
-                                C#</label>
+                                <label>
+                                    <input type="radio" name="radio" value="javascript">
+                                    <span>JavaScript</span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="radio" value="php">
+                                    <span>PHP</span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="radio" value="csharp">
+                                    <span>C#</span>
+                                </label>
                             </div>
                         </fieldset>
                     </div>
@@ -283,7 +346,63 @@
             </p>
         </main>
         <script>
-            document.querySelector('.copyright span').textContent=new Date().getFullYear();
+            const rangeMin = 0,
+                rangeMax = 150;
+            let sliderMin = document.querySelector('.submit-form__range_slider > input:not(:last-child)'),
+                sliderMax = document.querySelector('.submit-form__range_slider > input:last-child'),
+                inputMin = document.querySelector('.submit-form__range_input > input:first-child'),
+                inputMax = document.querySelector('.submit-form__range_input > input:last-child'),
+                sliderTrack = document.querySelector('.submit-form__range_slider > div > span');
+            function updateTrack(){
+                sliderTrack.style.background =
+                'linear-gradient(90deg,var(--faded-text) ' +
+                (inputMin.value/rangeMax) * 100 +
+                '%, var(--highlight-color) ' +
+                (inputMin.value/rangeMax) * 100 +
+                '%, var(--highlight-color) ' +
+                (inputMax.value/rangeMax) * 100 +
+                '%, var(--faded-text) ' + (inputMax.value/rangeMax) * 100 + '%)'
+            };
+            function syncSlider(slider, input, compareValue, comparison) {
+                const sliderValue = parseInt(slider.value);
+                const compareValueInt = parseInt(compareValue.value);
+
+                if (comparison(sliderValue, compareValueInt)) {
+                    slider.value = compareValue.value;
+                }
+                input.value = slider.value;
+                updateTrack();
+            };
+            function handleInput(a, b, c, d, e) {
+                const currentValue = parseInt(a.value);
+                if (!(/^[0-9]+$/.test(currentValue) && !isNaN(currentValue))){
+                    e ? a.value = b : a.value = c;
+                } else if (currentValue < b) {
+                    a.value = b;
+                } else if (currentValue > c) {
+                    a.value = Math.round(c);
+                } else {
+                    a.value = currentValue;
+                };
+                d.value = parseInt(a.value);
+                updateTrack();
+            };
+            sliderMin.oninput = function() {
+                syncSlider(this, inputMin, inputMax, (a, b) => a > b);
+            };
+            sliderMax.oninput = function() {
+                syncSlider(this, inputMax, inputMin, (a, b) => a < b);
+            };
+            inputMin.onchange = function() {
+                handleInput(this, rangeMin, parseInt(inputMax.value), sliderMin, true);
+            };
+            inputMax.onchange = function() {
+                handleInput(this, parseInt(inputMin.value), rangeMax, sliderMax);
+            };
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelector('.copyright span').textContent=new Date().getFullYear();
+                updateTrack();
+            });
         </script>
     </body>
 </html>
