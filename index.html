@@ -8,6 +8,9 @@
             @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&display=swap');
             :root {
                 --padding-mobile: 15px;
+                --dark-text: #000;
+                --light-text: #fff;
+                --highlight-color: #025B58;
             }
             body {
                 font-family: "Source Code Pro", monospace;
@@ -27,13 +30,20 @@
             }
             h2 {
                 font-size: 21px;
+                margin: 37px 0 0;
             }
             h3 {
                 font-size: 18px;
+                margin: 43px 0 0;
+            }
+            hr {
+                border: none;
+                border-top: 1px solid var(--dark-text);
+                margin: 36px 0 0;
             }
             .header {
                 background: black;
-                color: white;
+                color: var(--light-text);
                 display: grid;
                 grid-template: 
                     'image'
@@ -69,8 +79,34 @@
                     border-radius: 0;
                     padding: 10px;
                 }
+                input[type=radio], input[type=checkbox] {
+                    margin: 0;
+                    vertical-align: bottom;
+                }
+                input[type=submit] {
+                    flex: 0;
+                    cursor: pointer;
+                    color: var(--light-text);
+                    border: none;
+                    border-radius: 0;
+                    box-shadow: 6px 5px #000;
+                    background-color: var(--highlight-color);
+                    padding: 10px 0;
+                    min-width: 150px;
+                    &:active {
+                        box-shadow: none;
+                        margin-top: 5px;
+                        margin-bottom: -5px;
+                        margin-left: 6px;
+                    }
+                }
                 legend {
                     font-weight: 500;
+                }
+                label {
+                    white-space: nowrap;
+                    font-size: 12px;
+                    cursor: pointer;
                 }
                 /* убрать стрелки в полях формы */
                 /* Chrome, Safari, Edge, Opera */
@@ -91,6 +127,9 @@
                 }
                 .submit-form__row > * {
                     flex: 1 1 100%;
+                }
+                .submit-form__row_credentials, .submit-form__row_agreement, .submit-form__row_submit {
+                    margin-top: 28px;
                 }
             }
             /* важно что при ширине экрана менее 600px высота контейнера изображения .header__image не был меньше 220px.
@@ -144,7 +183,9 @@
             <div class="header__text">
                 <h1>Заголовок h1</h1>
                 <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                    incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+                    nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                 </p>
             </div>
             <div class="header__image">
@@ -159,8 +200,8 @@
                         <fieldset>
                             <legend>Выберите диапазон</legend>
                             <div class="submit-form__row">
-                                <input type="number" name="range__input-min" min="0" max="150" />
-                                <input type="number" name="range__input-max" min="0" max="150" />
+                                <input type="number" name="range__input-min" min="0" max="150" placeholder="от 0" />
+                                <input type="number" name="range__input-max" min="0" max="150" placeholder="от 150"/>
                             </div>
                         </fieldset>
                         <div class="submit-form__row">
@@ -172,9 +213,10 @@
                 <div class="submit-form__row">
                     <div>
                         <fieldset>
-                        <legend>Выберите select</legend>
+                            <legend>Выберите select</legend>
                             <div class="submit-form__row">
                                 <select name="select">
+                                    <option value disabled selected>Option</option>
                                     <option value="1">1</option>
                                     <option value="2">2</option>
                                     <option value="3">3</option>
@@ -197,7 +239,51 @@
                         </fieldset>
                     </div>
                 </div>
+                <div class="submit-form__row submit-form__row_credentials">
+                    <div>
+                        <fieldset>
+                            <legend>Введите ФИО</legend>
+                            <div class="submit-form__row">
+                                <input type="text" placeholder="Placeholder" />
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div>
+                        <fieldset>
+                            <legend>Введите возраст в цифрах</legend>
+                            <div class="submit-form__row">
+                                <input type="number" min="0" placeholder="Placeholder" />
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+                <div class="submit-form__row submit-form__row_credentials">
+                    <div>
+                        <fieldset>
+                            <label><input type="checkbox" name="checkbox" value="javascript" required checked>
+                            Обязательный checkbox</label>
+                            <label><input type="checkbox" name="optional-checkbox" value="php">
+                            Необязательный checkbox</label>
+                        </fieldset>
+                    </div>
+                </div>
+                <div class="submit-form__row submit-form__row_submit">
+                    <input type="submit" value="Отправить" />
+                </div>
             </form>
+            <h3>Заголовок h3</h3>
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+                nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            </p>
+            <hr/>
+            <p class="copyright">
+                © John Lotos, 1992-<span></span>
+            </p>
         </main>
+        <script>
+            document.querySelector('.copyright span').textContent=new Date().getFullYear();
+        </script>
     </body>
 </html>
